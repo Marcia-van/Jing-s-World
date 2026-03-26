@@ -1,0 +1,779 @@
+/* =========================
+   1. 基础重置 (必须保留)
+   ========================= */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: auto;       /* 必须是 auto，否则 Lenis 算不出高度 */
+  overflow-x: hidden;
+  overflow-y: auto;   /* 允许滚动 */
+}
+
+body {
+  background: #f4fafd;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+
+
+/* =========================
+   4. 第一页：Hero 核心布局 (还原三栏)
+   ========================= */
+.hero {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: flex-start; /* 改为向左对齐，不让它们乱跑 */
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 左侧文字区 */
+.hero-left {
+  width: 40%;
+  display: flex;
+  align-items: center;
+  padding-left: 80px;
+  padding-top: 120px;
+}
+.hero-copy { max-width: 520px; white-space: nowrap; }
+
+.hero-line {
+  margin: 0; font-size: 50px; line-height: 1.1; font-weight: 500;
+  color: #9dc4f2;
+  font-family: "Noto Serif SC", serif;
+}
+.hero-line-small { font-size: 46px; }
+
+/* 花体字还原 (64px) */
+.hero-line-script {
+  font-size: 64px;
+  font-family: "Dancing Script", cursive;
+  font-style: italic;
+  color: rgb(114, 160, 207);
+  margin: 5px 0;
+}
+
+.hero-subtitle {
+  margin-top: 32px; font-size: 20px; color: #86beeb; line-height: 1.8;
+  max-width: 460px;
+  animation: fadeInLeft 1.2s ease forwards 0.3s;
+}
+
+/* 中间视频区 (还原 -80px 偏移) */
+.hero-center {
+  width: 45%; display: flex; justify-content: flex-end; align-items: center;
+}
+.hero-video-frame {
+  position: relative;
+  width: 320px; height: 680px;
+  margin-right: -80px; /* 还原你的偏移 */
+  background: #ffffff;
+  z-index: 2;
+  animation: panelOpen 1.1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.hero-video {
+  width: 100%; height: 100%; object-fit: cover;
+  -webkit-mask-image: radial-gradient(circle, black 65%, transparent 100%);
+  mask-image: radial-gradient(circle, black 65%, transparent 100%);
+}
+
+/* 视频开门动画 */
+.video-door-left, .video-door-right {
+  position: absolute; top: 0; width: 50.5%; height: 100%;
+  background: #eff9ff; z-index: 10;
+  animation: 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards 0.8s;
+}
+.video-door-left { left: 0; animation-name: doorOpenLeft; }
+.video-door-right { right: 0; animation-name: doorOpenRight; }
+
+/* 右侧菜单 */
+.hero-right {
+  width: 40%; display: flex; justify-content: flex-end; padding-top: 48px; padding-right: 56px;
+}
+.hero-nav { display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
+.hero-nav-link {
+  font-size: 20px; font-weight: 700; color: #9dc4f2; text-decoration: none;
+  font-family: "Baskerville", serif;
+}
+
+/* =========================
+   5. 第二页：内容布局
+   ========================= */
+.next-page {
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f7ff; /* 略深的蓝色方便区分 */
+  height: 100vh;   /* 强制等于一屏高度 */
+  flex-shrink: 0;  /* 核心：防止第二页被第一页挤成 0 像素 */
+}
+.content-box { text-align: center; }
+.content-box h2 { color: #3f7ec5; font-size: 3rem; margin-bottom: 20px; }
+
+/* =========================
+   6. 动画定义 (保持不变)
+   ========================= */
+@keyframes doorOpenLeft { to { transform: translateX(-100%); } }
+@keyframes doorOpenRight { to { transform: translateX(100%); } }
+@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeInLogo { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes panelOpen { from { opacity: 0.4; transform: scaleX(0.72); } to { opacity: 1; transform: scaleX(1); } }
+
+/* 响应式适配 (保留) */
+@media (max-width: 900px) {
+  .hero { flex-direction: column; padding: 80px 24px; }
+  .hero-left, .hero-center, .hero-right { width: 100%; }
+  .hero-video-frame { width: 240px; height: 520px; margin-right: 0; }
+}
+
+/* =========================
+   新增：滚动容器 (PPT 翻页核心)
+   ========================= */
+
+
+
+/* =========================
+   2. 滚动容器 (翻页核心：全删掉重复的，只留这一个)
+   ========================= */
+.scroll-container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.scroll-container::-webkit-scrollbar { display: none; }
+
+/* =========================
+   3. 页面布局 (两页通用的基础设置)
+   ========================= */
+.hero, .next-page {
+  height: 100vh;   /* 强制等于一屏高度 */
+  flex-shrink: 0;  /* 核心：防止第二页被第一页挤成 0 像素 */
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100vh;           /* 强制每页满屏 */
+  flex-shrink: 0;          /* 防止被挤压 */
+  scroll-snap-align: start; 
+  scroll-snap-stop: always;
+  overflow: hidden;
+  background: #eff9ff;
+}
+
+/* =========================
+   3. 视频柔化 (新增)
+   ========================= */
+
+.hero-video {
+  /* 保持你原本的视频尺寸设置，添加以下滤镜和遮罩 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 核心：边缘羽化效果 */
+  -webkit-mask-image: radial-gradient(circle, black 65%, transparent 100%);
+  mask-image: radial-gradient(circle, black 65%, transparent 100%);
+}
+
+
+
+
+/* =========================
+   3. 左上角 Logo (优化版)
+   ========================= */
+
+.hero-logo {
+  position: absolute;
+  /* 调整位置：稍微离开边缘，让视觉更舒适 */
+  top: 60px; 
+  left: 70px;
+  z-index: 100; /* 确保在最顶层 */
+  
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  
+  /* 动画：Logo 也可以带一点点优雅的淡入 */
+  animation: fadeInLogo 1.5s ease forwards;
+}
+
+.hero-logo img,
+.hero-logo-image {
+  /* 保持你之前调好的 250px 宽度 */
+  width: 100px; 
+  height: auto;
+  display: block;
+  
+  /* 核心修改点： */
+  opacity: 1 !important;      /* 变回实色，不再半透明 */
+  filter: brightness(1.1);    /* 稍微提亮，让蓝色更清爽 */
+  object-fit: contain;
+  
+  /* 增加平滑度 */
+  transition: transform 0.4s ease;
+}
+
+/* 交互：鼠标悬停 Logo 微微放大，增加灵动感 */
+.hero-logo:hover img {
+  transform: scale(1.5);
+}
+
+/* Logo 专用淡入动画 */
+@keyframes fadeInLogo {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================
+   修正：主标题容器的间距
+   ========================= */
+
+.hero-left {
+  /* 确保左侧文字区域不要顶到 Logo 上 */
+  padding-top: 120px; /* 留出足够的空间给上方的 Logo */
+}
+
+
+
+
+/* =========================
+   4. 左侧标题区域 (优化版)
+   ========================= */
+
+.hero-left {
+  width: 40%;
+  display: flex;
+  align-items: center;        /* 垂直居中 */
+  justify-content: flex-start;
+  padding-left: 80px;        /* 向左靠，但保留呼吸空间 */
+  padding-right: 40px;
+}
+
+.hero-copy {
+  /* 关键点：将宽度加宽到足以容纳 "in the quiet gaps" 不断行 */
+  max-width: 520px; 
+  margin-top: 60px;
+  /* 确保内部文字不会因为溢出而奇怪断行 */
+  white-space: nowrap; 
+}
+
+/* 每一行基础样式 */
+.hero-line {
+  margin: 0;
+  font-size: 50px;            /* 在 56px 基础上调大两号 */
+  line-height: 1.1;
+  font-weight: 500;
+  color: #9dc4f2;             /* 统一为你指定的颜色 */
+  /* 基础使用衬线体，更有气质 */
+  font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
+}
+
+/* 较小行的字号调整 */
+.hero-line-small {
+  font-size: 46px;            /* 在 44px 基础上调大两号 */
+}
+
+/* =========================
+   核心修改：of myself 花体设置
+   ========================= */
+.hero-line-script {
+  /* 调大字号让手写感更明显 */
+  font-size: 64px; 
+  /* 优先使用高级手写体，若系统没有则回退到 cursive */
+  font-family: "Dancing Script", "Bakersfield", "Cursive", "Apple Chancery", serif;
+  /* 稍微倾斜，增加动感 */
+  font-style: italic; 
+  /* 手写体通常比正文轻盈，可以稍微调整边距 */
+  margin: 5px 0;
+  letter-spacing: 0.05em;
+  /* 保持颜色统一 */
+  color: rgb(114, 160, 207); 
+}
+
+/* =========================
+   4. 左侧副标题恢复与优化
+   ========================= */
+
+.hero-subtitle {
+  margin-top: 32px;           /* 与上方主标题保持间距 */
+  color: #86beeb;             /* 统一为你指定的蓝色 */
+  line-height: 1.8;           /* 增加行高，更易阅读 */
+  font-weight: 400;
+  
+  /* 调大字号：原先是 18px，现在调大到 22px */
+  font-size: 20px; 
+  
+  max-width: 460px;           /* 限制宽度，防止长句横跨整个屏幕 */
+  
+  /* 动画：紧随主标题之后淡入 */
+  animation: fadeInLeft 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation-delay: 0.3s;      /* 稍微延迟一点，形成视觉上的节奏感 */
+}
+
+/* 如果你想让副标题里的逗号或特定词汇更有呼吸感，可以微调 letter-spacing */
+.hero-subtitle {
+  letter-spacing: 0.01em;
+}
+
+/* =========================
+   动画定义
+   ========================= */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+
+
+
+
+
+/* =========================
+   5. 中间视频区域 (修正：突破限制向右挪)
+   ========================= */
+
+.hero-center {
+  width: 45%; 
+  display: flex;
+  justify-content: flex-end; 
+  align-items: center;
+  position: relative;
+  /* padding 不能负数，所以我们设为 0 */
+  padding-right: 0; 
+}
+
+/* 中间竖向舞台 / 视频窗口 */
+.hero-video-frame {
+  position: relative;
+  /* 1. 调小尺寸：你说需要它变小，我们将宽度设为 320px，高度设为 680px */
+  width: 320px;
+  height: 680px; 
+  max-height: 80vh; 
+  
+  /* 2. 关键：使用负的 margin-right 强制向右平移 */
+  /* 这个数值越大（负得越多），视频就越往右边靠 */
+  margin-right: -10px; 
+  
+  /* 或者使用 transform (更平滑，不影响布局) */
+  /* transform: translateX(80px); */
+
+  max-width: 100%;
+  background: #ffffff;
+  overflow: hidden;
+  z-index: 2;
+  
+  animation: panelOpen 1.1s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 真正的视频 */
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  display: block;
+}
+
+/* 门的基础样式 */
+.video-door-left,
+.video-door-right {
+  position: absolute;
+  top: 0;
+  width: 50.5%; /* 稍微重叠 0.5% 消除中间缝隙 */
+  height: 100%;
+  background: #eff9ff; 
+  z-index: 10;
+  animation-duration: 1.5s;
+  animation-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
+  animation-fill-mode: forwards;
+  animation-delay: 0.8s; /* 等待文字加载后启动 */
+}
+
+.video-door-left { left: 0; animation-name: doorOpenLeft; }
+.video-door-right { right: 0; animation-name: doorOpenRight; }
+
+@keyframes doorOpenLeft {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+@keyframes doorOpenRight {
+  from { transform: translateX(0); }
+  to { transform: translateX(100%); }
+}
+
+
+
+
+
+
+
+
+
+/* =========================
+   6. 右侧菜单区域 (Baskerville 粗体版)
+   ========================= */
+
+.hero-right {
+  width: 40%;
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding-top: 48px;
+  padding-right: 56px; 
+}
+
+/* 菜单容器 */
+.hero-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 18px; /* 字大且粗，间距也稍微调大 */
+  margin-top: 8px;
+  animation: fadeInRight 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* 菜单链接：Baskerville 粗体 */
+.hero-nav-link {
+  font-size: 20px; 
+  line-height: 1.4;
+  color: #9dc4f2; /* 统一蓝色 */
+  text-decoration: none;
+  
+  /* 核心修改：设置 Baskerville 并加粗 */
+  font-family: "Baskerville", "Libre Baskerville", "Times New Roman", serif;
+  font-weight: 700;        /* 设为粗体 */
+  letter-spacing: 0.05em;   /* 增加一点字间距，让粗体更清晰 */
+  
+  transition: all 0.3s ease;
+}
+
+/* 修改：让右侧菜单区域固定在屏幕上 */
+.hero-right {
+  position: fixed;   /* 核心：固定定位，不随页面滚动 */
+  top: 20px;        /* 距离顶部位置 */
+  right: 20px;       /* 距离右侧位置 */
+  z-index: 999;      /* 确保它永远在所有页面最上方 */
+  
+  width: auto;       /* 不再占用第一页的宽度百分比 */
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+/* 兼容处理：确保菜单在深色/浅色背景下都清晰 */
+.hero-nav-link {
+  /* 你之前的样式保持不变，但可以加个微小的阴影防止在白底上看不清 */
+  text-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+}
+
+/* 鼠标悬停交互 */
+.hero-nav-link:hover {
+  color: #e4ae0e;          /* 悬停变为黑色 */
+  font-style: italic;      /* 悬停变斜体，呼应左侧 of myself */
+  transform: translateX(-10px); /* 更有力的反馈 */
+}
+
+/* 右下角 (X) 标记已删除 */
+
+/* 确保动画逻辑 */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* =========================
+   7. 动画
+   ========================= */
+
+/* 左侧淡入 + 轻微左滑 */
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 右侧淡入 + 轻微右滑 */
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 中间“开合”感 */
+@keyframes panelOpen {
+  from {
+    opacity: 0.4;
+    transform: scaleX(0.72);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* =========================
+   8. 平板尺寸调整
+   ========================= */
+
+@media (max-width: 1200px) {
+  .hero-left {
+    padding-left: 72px;
+  }
+
+  .hero-right {
+    padding-right: 40px;
+  }
+
+  .hero-line {
+    font-size: 46px;
+  }
+
+  .hero-line-small {
+    font-size: 36px;
+  }
+
+  .hero-video-frame {
+    width: 280px;
+    height: 620px;
+  }
+
+  .hero-logo img,
+  .hero-logo-image {
+    width: 210px;
+  }
+}
+
+/* =========================
+   9. 手机端改成上下布局
+   ========================= */
+
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    gap: 30px;
+    padding: 80px 24px 40px;
+  }
+
+  .hero-left,
+  .hero-center,
+  .hero-right {
+    width: 100%;
+  }
+
+  .hero-left {
+    justify-content: flex-start;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    margin-top: 20px;
+  }
+
+  .hero-line {
+    font-size: 40px;
+  }
+
+  .hero-line-small {
+    font-size: 30px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .hero-center {
+    justify-content: flex-start;
+  }
+
+  .hero-video-frame {
+    width: 240px;
+    height: 520px;
+  }
+
+  .hero-right {
+    justify-content: flex-start;
+    padding-top: 0;
+    padding-right: 0;
+  }
+
+  .hero-nav {
+    align-items: flex-start;
+  }
+
+  .hero-corner-mark {
+    position: static;
+    margin-top: 20px;
+  }
+
+  .hero-logo {
+    top: 24px;
+    left: 24px;
+  }
+
+  .hero-logo img,
+  .hero-logo-image {
+    width: 180px;
+  }
+}
+
+
+/* 第二页整体容器 */
+.next-page {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #fdfafd; /* 换个舒服的浅白色 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+}
+
+.section-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 32px;
+  color: #9dc4f2;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+/* 视频网格：三列横排 */
+.video-grid {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap; /* 屏幕窄了会自动换行 */
+}
+
+.simple-video-item {
+  width: 300px;
+  text-align: center;
+}
+
+.simple-video-item video {
+  width: 100%;
+  border-radius: 8px; /* 圆角增加精致感 */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* 淡淡的阴影 */
+  transition: transform 0.3s ease;
+}
+
+/* 鼠标放上去稍微大一点点，不用库，CSS 就能实现 */
+.simple-video-item video:hover {
+  transform: scale(1.03);
+}
+
+.simple-video-item p {
+  margin-top: 15px;
+  font-family: "Baskerville", serif;
+  font-style: italic;
+  color: #86beeb;
+}
+
+
+
+
+/* 第三页，让每一页都成为一个完美的居中容器 */
+/* 修改后的 .next-page */
+.next-page {
+  width: 100%;
+  min-height: 100vh; 
+  display: flex;
+  align-items: center;    
+  justify-content: center; 
+  position: relative;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  
+
+  /* 💡 调整这里：第一个值是顶部，第三个值是底部 */
+  /* 如果想向下移动，就加大第一个值（比如 200px），减小第三个值（比如 50px） */
+  padding: 0px 0 50px 0; 
+}
+
+/* 内容盒子的宽度控制 */
+.content-box {
+  width: 90%;
+  max-width: 1100px;
+  text-align: center;
+}
+
+/* 2x2 视频网格 */
+.video-grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 50px;
+}
+
+/* 视频卡片基础样式 */
+.hover-video-card {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  border: 2px solid transparent;
+}
+
+/* 视频本身 */
+.hover-video-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+/* 鼠标悬停特效：放大 + 蓝边 + 真正变亮 */
+.hover-video-card:hover {
+  transform: scale(1.05);
+  border-color: #9dc4f2 !important;
+  box-shadow: 0 30px 50px rgba(157, 196, 242, 0.3);
+  
+  /* 💡 增加这一行：1.2 代表亮度增加 20% */
+  /* 如果想更亮，可以改成 1.5 */
+  filter: brightness(1.2); 
+}
+
+.hover-video-card:hover video {
+  opacity: 1; /* 这只是让视频从模糊/半透明变清晰，不是变亮 */
+}
