@@ -1,5 +1,3 @@
-
-import Lenis from "lenis"; // 确保你之前运行过 npm install lenis
 import React, { useEffect, useRef } from "react"; // ✅ 必须加上 useRef
 import "./App.css";
 
@@ -263,23 +261,23 @@ function App() {
   );
 }
 
-// 抽离样式变量，让上面看起来更干净
+// ✅ 样式变量定义在组件外部，确保打包时能被正确引用
 const videoCardStyle = {
-  width: "100%",
-  aspectRatio: "16/9",
-  background: "#000",
-  borderRadius: "8px",
-  overflow: "hidden",
-  cursor: "pointer",
-  transition: "all 0.4s ease",
-  border: "2px solid transparent",
+  width: "100%",
+  aspectRatio: "16/9",
+  background: "#000",
+  borderRadius: "8px",
+  overflow: "hidden",
+  cursor: "pointer",
+  transition: "all 0.4s ease",
+  border: "2px solid transparent",
 };
 
 const videoElementStyle = {
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  display: "block",
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  display: "block",
 };
 
 export default App;
