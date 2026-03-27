@@ -58,6 +58,7 @@ body {
   margin: 5px 0;
 }
 
+
 .hero-subtitle {
   margin-top: 32px; font-size: 20px; color: #86beeb; line-height: 1.8;
   max-width: 460px;
@@ -91,44 +92,9 @@ body {
 .video-door-left { left: 0; animation-name: doorOpenLeft; }
 .video-door-right { right: 0; animation-name: doorOpenRight; }
 
-/* 右侧菜单 */
-.hero-right {
-  width: 40%; display: flex; justify-content: flex-end; padding-top: 48px; padding-right: 56px;
-}
-.hero-nav { display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
-.hero-nav-link {
-  font-size: 20px; font-weight: 700; color: #9dc4f2; text-decoration: none;
-  font-family: "Baskerville", serif;
-}
 
-/* =========================
-   5. 第二页：内容布局
-   ========================= */
-.next-page {
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f7ff; /* 略深的蓝色方便区分 */
-  height: 100vh;   /* 强制等于一屏高度 */
-  flex-shrink: 0;  /* 核心：防止第二页被第一页挤成 0 像素 */
-}
-.content-box { text-align: center; }
-.content-box h2 { color: #3f7ec5; font-size: 3rem; margin-bottom: 20px; }
 
-/* =========================
-   6. 动画定义 (保持不变)
-   ========================= */
-@keyframes doorOpenLeft { to { transform: translateX(-100%); } }
-@keyframes doorOpenRight { to { transform: translateX(100%); } }
-@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes fadeInLogo { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes panelOpen { from { opacity: 0.4; transform: scaleX(0.72); } to { opacity: 1; transform: scaleX(1); } }
 
-/* 响应式适配 (保留) */
-@media (max-width: 900px) {
-  .hero { flex-direction: column; padding: 80px 24px; }
-  .hero-left, .hero-center, .hero-right { width: 100%; }
-  .hero-video-frame { width: 240px; height: 520px; margin-right: 0; }
-}
 
 /* =========================
    新增：滚动容器 (PPT 翻页核心)
@@ -170,17 +136,42 @@ body {
    3. 视频柔化 (新增)
    ========================= */
 
-.hero-video {
-  /* 保持你原本的视频尺寸设置，添加以下滤镜和遮罩 */
+/* 1. 给“框”加圆角和裁剪 */
+.hero-video-frame {
+  position: relative;
+  width: 100%; /* 或者你设定的固定宽度 */
+  height: 100%; /* 或者你设定的固定高度 */
+  
+  /* 🌟 核心：在这里设置 50px 圆角 */
+  border-radius: 50px; 
+  
+  /* 🌟 核心：强制裁剪，所有里面的东西（视频、门）都会被切圆 */
+  overflow: hidden; 
+  
+  /* 针对部分浏览器的强制裁剪黑科技 */
+  mask-image: -webkit-radial-gradient(white, black);
+  isolation: isolate; 
+}
+
+/* 2. 视频本身的设置 */
+.hero-video.softened-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* 核心：边缘羽化效果 */
-  -webkit-mask-image: radial-gradient(circle, black 65%, transparent 100%);
-  mask-image: radial-gradient(circle, black 65%, transparent 100%);
+  
+  /* 视频本身也设一下圆角，双重保险 */
+  border-radius: 50px; 
+
+  /* 🚫 彻底移除之前的羽化效果 */
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
 }
 
-
+/* 3. 如果你的“门”也需要跟着变圆（可选） */
+.video-door-left, .video-door-right {
+  /* 只要父容器设了 overflow: hidden，
+     这两扇门在关闭时也会自动被切成 50px 的圆角，非常丝滑 */
+}
 
 
 /* =========================
@@ -431,6 +422,16 @@ body {
    6. 右侧菜单区域 (Baskerville 粗体版)
    ========================= */
 
+
+.hero-right {
+  width: 40%; display: flex; justify-content: flex-end; padding-top: 48px; padding-right: 56px;
+}
+.hero-nav { display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
+.hero-nav-link {
+  font-size: 20px; font-weight: 700; color: #9bbee7; text-decoration: none;
+  font-family: "Baskerville", serif;
+}
+
 .hero-right {
   width: 40%;
   position: relative;
@@ -455,7 +456,7 @@ body {
 .hero-nav-link {
   font-size: 20px; 
   line-height: 1.4;
-  color: #9dc4f2; /* 统一蓝色 */
+  color: #88abd4; /* 统一蓝色 */
   text-decoration: none;
   
   /* 核心修改：设置 Baskerville 并加粗 */
@@ -492,7 +493,6 @@ body {
   transform: translateX(-10px); /* 更有力的反馈 */
 }
 
-/* 右下角 (X) 标记已删除 */
 
 /* 确保动画逻辑 */
 @keyframes fadeInRight {
@@ -654,76 +654,225 @@ body {
 }
 
 
+/* =========================
+   5. 第二页：内容布局
+   ========================= */
+.next-page {
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f7ff; /* 略深的蓝色方便区分 */
+  height: 100vh;   /* 强制等于一屏高度 */
+  flex-shrink: 0;  /* 核心：防止第二页被第一页挤成 0 像素 */
+}
+.content-box { text-align: center; }
+.content-box h2 { color: #95b8f0; font-size: 3rem; margin-bottom: 150px; }
+
+/* =========================
+   6. 动画定义 (保持不变)
+   ========================= */
+@keyframes doorOpenLeft { to { transform: translateX(-100%); } }
+@keyframes doorOpenRight { to { transform: translateX(100%); } }
+@keyframes fadeInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeInLogo { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes panelOpen { from { opacity: 0.4; transform: scaleX(0.72); } to { opacity: 1; transform: scaleX(1); } }
+
+/* 响应式适配 (保留) */
+@media (max-width: 900px) {
+  .hero { flex-direction: column; padding: 80px 24px; }
+  .hero-left, .hero-center, .hero-right { width: 100%; }
+  .hero-video-frame { width: 240px; height: 520px; margin-right: 0; }
+}
+
 /* 第二页整体容器 */
 .next-page {
   width: 100%;
   min-height: 100vh;
-  background-color: #fdfafd; /* 换个舒服的浅白色 */
+  
+  /* 🌟 背景图入口：把引号里的路径换成你的图片文件名 */
+  background-image: url('/2-background.png'); 
+  background-size: cover;      /* 让背景图铺满全屏 */
+  background-position: center; /* 让背景图居中 */
+  background-repeat: no-repeat;
+  
+  /* 如果背景图没加载出来，会显示下面这个原本的浅白色 */
+  background-color: #fafbfd; 
+  
   display: flex;
+  flex-direction: column; /* 确保标题和海报从上往下排 */
   justify-content: center;
   align-items: center;
   padding: 80px 0;
+  position: relative; /* 为以后可能的装饰物留位 */
 }
 
 .section-title {
   font-family: "Noto Serif SC", serif;
-  font-size: 32px;
-  color: #9dc4f2;
+  
+  /* 1. 调整大小：数字越大字越大，比如 36px 或 40px */
+  font-size: 36px; 
+  
+  /* 2. 调整颜色：你可以换成深蓝 #4a90e2，或者纯白 #ffffff，或者你喜欢的任何色值 */
+  color: #aad2ff; 
+  
   text-align: center;
-  margin-bottom: 50px;
+  
+  /* 3. 调整位置：
+     想要文字“靠下一点”，就增加顶部的间距 (margin-top)。
+     比如加一个 60px 甚至更多，把它从屏幕顶端挤下来。*/
+  margin-top: 180px; 
+
+  /* 4. 离海报的距离：
+     你之前说怕挡住字，如果文字调大了，建议这里保持在 80px-100px 左右 */
+  margin-bottom: 70px; 
+
+  position: relative; 
+  z-index: 2; 
 }
 
-/* 视频网格：三列横排 */
-.video-grid {
+
+
+/* ---------------------------------------------------- */
+/* 海报扇形画廊 (Poster Fan Gallery) - 垂直长条修正版   */
+/* ---------------------------------------------------- */
+
+/* 全新的海报画廊容器 */
+.poster-fan-gallery {
   display: flex;
-  gap: 30px;
   justify-content: center;
-  flex-wrap: wrap; /* 屏幕窄了会自动换行 */
-}
-
-.simple-video-item {
-  width: 300px;
-  text-align: center;
-}
-
-.simple-video-item video {
+  align-items: flex-end; /* 🌟 核心：所有海报底部对齐 */
   width: 100%;
-  border-radius: 8px; /* 圆角增加精致感 */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05); /* 淡淡的阴影 */
-  transition: transform 0.3s ease;
+  max-width: 1200px; /* 适当调大最大宽度 */
+  margin: 0 auto;
+  position: relative;
+  /* 增加上下 padding，给海报旋转和放大留出空间，防止溢出 */
+  padding: 100px 40px; 
+  z-index: 1;
 }
 
-/* 鼠标放上去稍微大一点点，不用库，CSS 就能实现 */
-.simple-video-item video:hover {
-  transform: scale(1.03);
+/* 每一个海报条目的基础样式 */
+.poster-fan-gallery .simple-video-item {
+  /* 🌟 核心修正：垂直海报的宽度要设窄，高度自动 */
+  width: 200px; /* 设置一个固定的、较窄的宽度，让图片撑开高度 */
+  height: auto;
+  max-height: 80vh; /* 限制最大高度，防止过长 */
+  
+  /* 🌟 核心修正：减少水平负边距，让海报之间有合理的重叠，类似扑克牌 */
+  margin: 0 -35px; 
+  
+  position: relative;
+  border-radius: 8px; /* 轻微圆角 */
+  overflow: hidden;
+  background: #000; /* 图片加载前的背景色 */
+  
+  /* 🌟 核心修正：设置旋转的中心点为底部中心，像扇子一样展开 */
+  transform-origin: bottom center;
+  
+  /* 为过渡和层级设置平滑的动画 */
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
+              z-index 0.3s ease, 
+              box-shadow 0.5s ease;
+  
+  /* 初始阴影，增加重叠的立体感 */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4); 
 }
 
-.simple-video-item p {
-  margin-top: 15px;
-  font-family: "Baskerville", serif;
-  font-style: italic;
-  color: #86beeb;
+/* 海报图片本身的样式 */
+.poster-fan-gallery .simple-video-item img {
+  width: 100%;
+  height: auto; /* 保持图片原始比例 */
+  display: block;
+  border-radius: 6px;
+}
+
+/* 海报下方的文字样式 (建议缩小，保持纯净) */
+.poster-fan-gallery .simple-video-item p {
+  color: #fff;
+  text-align: center;
+  padding: 6px 0;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  position: absolute; /* 文字悬浮在海报底部 */
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+}
+
+/* 🌟 海报扇形微调 (参考 image_8.png 的扑克牌重叠和旋转) */
+/* 我们使用不同的 z-index，让中间的海报最高，两边的依次降低 */
+/* 同时通过 translateY 让两边的海报稍微低一点，形成更完美的弧形 */
+
+/* 海报 1 (最左) */
+.poster-fan-gallery .p1 { 
+  transform: rotate(-12deg) translateX(-15px) translateY(10px); 
+  z-index: 2; 
+}
+/* 海报 2 */
+.poster-fan-gallery .p2 { 
+  transform: rotate(-6deg) translateX(-8px) translateY(5px); 
+  z-index: 3; 
+}
+/* 海报 3 (中间) - 最正、最高 */
+.poster-fan-gallery .p3 { 
+  transform: rotate(0deg) translateY(0); 
+  z-index: 4; 
+}
+/* 海报 4 */
+.poster-fan-gallery .p4 { 
+  transform: rotate(6deg) translateX(8px) translateY(5px); 
+  z-index: 3; 
+}
+/* 海报 5 (最右) */
+.poster-fan-gallery .p5 { 
+  transform: rotate(12deg) translateX(15px) translateY(10px); 
+  z-index: 2; 
+}
+
+/* 🌟 核心悬停效果 (鼠标放上去时) */
+.poster-fan-gallery .simple-video-item:hover {
+  /* “放大”：scale 从 1 变成 1.5 */
+  /* 同时我们要抵消所有的旋转和偏移，让它变正，突出展示 */
+  /* 🌟 关键：translateY(-15px) 让海报往上浮动一点，增加动感 */
+  transform: scale(1.7) rotate(0deg) translateX(0) translateY(-15px);
+  
+  /* “变成第一张”：让被悬停的海报跳到最前面，挡住所有别人 */
+  z-index: 10 !important; 
+  
+  /* 增强阴影，强调被突出的视觉效果 */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); 
 }
 
 
 
 
-/* 第三页，让每一页都成为一个完美的居中容器 */
-/* 修改后的 .next-page */
+
+/* 修改后的 .next-page：每一页的基础容器 */
 .next-page {
   width: 100%;
   min-height: 100vh; 
   display: flex;
+  flex-direction: column; /* 🌟 加上这行，确保标题和内容从上往下排 */
   align-items: center;    
   justify-content: center; 
   position: relative;
   background-color: #ffffff;
   box-sizing: border-box;
-  
 
-  /* 💡 调整这里：第一个值是顶部，第三个值是底部 */
-  /* 如果想向下移动，就加大第一个值（比如 200px），减小第三个值（比如 50px） */
-  padding: 0px 0 50px 0; 
+  /* 💡 默认间距：顶部 20px，左右 0，底部 50px */
+  /* 如果你想让某一页整体下移，就在该页的类名里单独改这个 padding */
+  padding: 20px 0 50px 0; 
+}
+
+/* 🌟 最小限度修正：让 Page 3 保持标准居中，不受其他页面干扰 */
+.page-3 {
+  padding: 0 !important; /* 清除所有额外的 padding，让它绝对居中 */
+  justify-content: center;
+}
+
+.page-3 .section-title, 
+.page-3 .title-p3 {
+  margin-top: 0 !important; /* 强制消除可能存在的顶部挤压 */
+  margin-bottom: 40px;      /* 保持标题和视频的舒适距离 */
 }
 
 /* 内容盒子的宽度控制 */
@@ -776,4 +925,144 @@ body {
 
 .hover-video-card:hover video {
   opacity: 1; /* 这只是让视频从模糊/半透明变清晰，不是变亮 */
+}
+
+
+/* ==================================================== */
+/* 第四页：完全独立控制区 (Page 4)                      */
+/* ==================================================== */
+
+/* 1. 独立控制第四页的整体位置和背景 */
+.page-4 {
+  padding: 0 !important;      /* 核心：清零，解决“靠下”问题 */
+  justify-content: center;    /* 垂直居中 */
+  background-color: #ffffff;  /* 以后想换背景直接改这里 */
+}
+
+/* 2. 独立控制第四页标题的位置、大小、颜色 */
+.page-4 .section-title {
+  margin-top: 0 !important;   /* 确保标题不被顶下来 */
+  margin-bottom: 50px;        /* 标题和内容的间距，以后可以随便调 */
+  
+  /* 以后可以在这里单独改 Page 4 的字体颜色或大小 */
+  /* color: #ff6b6b; */
+  /* font-size: 2.8rem; */
+}
+
+/* 3. 独立控制第四页的内容盒子（比如宽度） */
+.page-4 .content-box {
+  max-width: 1200px;         /* 如果 Page 4 视频更多，可以改宽一点 */
+}
+
+/* 4. 独立控制第四页的网格布局 */
+.page-4 .video-grid-2x2 {
+  gap: 30px;                 /* 以后想让 Page 4 的视频排得紧一点就改这里 */
+}
+
+/* ==================================================== */
+/* 第五页：AI 视频展示区 (Page 5) 独立控制              */
+/* ==================================================== */
+
+/* 1. 独立页面容器 */
+.page-5 {
+  background-color: #0a0c10; /* 深色背景更能衬托视频质量 */
+  padding: 60px 0 !important;
+  justify-content: flex-start !important; /* 让内容从顶部开始排，方便微调 */
+  min-height: 100vh;
+}
+
+/* 2. 独立标题样式 */
+.title-p5 {
+  font-family: "Noto Serif SC", serif;
+  font-size: 2.8rem;
+  color: #9fbada;
+  text-align: center; 
+  margin-top: 40px !important; /* 调整标题离顶部的距离 */
+  margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(185, 217, 253, 0.2);
+}
+
+/* 3. 视频外层盒子：控制视频在页面中的大小 */
+.demo-video-container {
+  width: 90%;
+  max-width: 1000px; /* 限制最大宽度，防止横屏视频撑得太满 */
+  margin: 0 auto;
+  border-radius: 20px; /* 保持你喜欢的圆角风格 */
+  overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 4. 视频本身 */
+.product-demo-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  background: #000;
+}
+
+/* 5. 底部描述文字 */
+.video-description {
+  margin-top: 25px;
+  color: #666;
+  font-size: 1.1rem;
+  font-style: italic;
+  max-width: 600px;
+}
+
+/* 🌟 特殊处理：自定义播放控件的颜色（部分浏览器支持） */
+.product-demo-video::-webkit-media-controls-panel {
+  background-image: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+
+
+/* 1. 全屏背景：深邃渐变 */
+.page-6 {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(circle at center, #2c3e50 0%, #000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 2. 核心：大幅度放大的 3D 展位 */
+.canvas-side {
+  /* 🌟 这里的尺寸根据你想要的感觉调整，建议占屏幕的 70%-80% */
+  width: 80vw;  
+  height: 70vh; 
+  max-width: 1200px;
+  background: rgba(255, 255, 255, 0.02); /* 极淡的磨砂感 */
+  backdrop-filter: blur(15px);
+  border-radius: 40px; /* 大圆角 */
+  
+  /* 🌟 增加发光边框，模拟那种科技感线条 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 40px 100px rgba(0, 0, 0, 0.8), 
+    inset 0 0 30px rgba(113, 129, 167, 0.1);
+    
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.canvas-side:hover {
+  transform: scale(1.02); /* 悬停时微微放大，更有灵动感 */
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* 3. 文字装饰（可选，增加页面平衡感） */
+.text-side {
+  position: absolute;
+  bottom: 8%;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  pointer-events: none; /* 防止遮挡鼠标操作 */
 }
