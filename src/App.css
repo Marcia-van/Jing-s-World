@@ -18,6 +18,95 @@ body {
 * { box-sizing: border-box; }
 
 
+/* =========================================
+   📱 手机端适配补丁 (屏幕 < 768px 时生效)
+   ========================================= */
+@media (max-width: 768px) {
+  
+  /* 1. 第一页：由左右并排改为上下堆叠 */
+  .hero {
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .hero-left {
+    width: 100%;
+    padding: 0;
+    align-items: center;
+    margin-bottom: 30px; /* 给下面的视频留空间 */
+  }
+
+  .hero-copy {
+    white-space: normal; /* 手机上允许文字换行 */
+    max-width: 90%;
+  }
+
+  .hero-line {
+    font-size: 32px; /* 缩小字号，防止溢出 */
+  }
+  
+  .hero-line-script {
+    font-size: 40px;
+  }
+
+  /* 2. 第一页：视频框缩小 */
+  .hero-center {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-video-frame {
+    width: 220px;   /* 手机上窄一点 */
+    height: 460px;  /* 比例缩放 */
+    margin-right: 0; /* 取消负偏移，居中显示 */
+  }
+
+  /* 3. P7 3D 页面：调整玻璃框和文字 */
+  .p7-glass-booth {
+    width: 90%;     /* 手机上框要占满宽度 */
+    height: 40vh;   /* 高度减小，防止盖住标题 */
+    top: 60%;       /* 位置再往下一点 */
+  }
+
+  .p7-title {
+    left: 5%;
+    top: 5%;
+    font-size: 24px;
+    width: 90%;
+    text-align: center;
+  }
+
+  /* 4. 隐藏不必要的元素 */
+  .hero-right {
+    display: none; /* 手机上通常把导航藏在菜单里，或者直接隐藏减少视觉干扰 */
+  }
+  
+  .hero-logo {
+    left: 20px;
+    top: 20px;
+  }
+  
+  .hero-logo img {
+    width: 60px; /* 缩小 Logo */
+  }
+}
+
+.hero-copy {
+  width: 90%;          /* 限制宽度占父级的 90% */
+  max-width: 520px;    /* 电脑大屏时最多这么宽 */
+  margin-top: 60px;
+  white-space: normal;  /* 🌟 关键：屏幕窄了允许自动换行，不要横向冲出去 */
+  word-break: break-word; 
+}
+
+.hero-line {
+  font-size: clamp(24px, 4vw, 50px); /* 🌟 黑科技：字号随屏幕自动缩放，最小24，最大50 */
+  line-height: 1.2;
+}
+
+
 
 /* =========================
    4. 第一页：Hero 核心布局 (还原三栏)
@@ -1356,3 +1445,4 @@ body {
   color: rgba(255,255,255,0.3);
   letter-spacing: 3px;
 }
+
