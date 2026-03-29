@@ -95,13 +95,6 @@ body {
 
 
 
-
-/* =========================
-   新增：滚动容器 (PPT 翻页核心)
-   ========================= */
-
-
-
 /* =========================
    2. 滚动容器 (翻页核心：全删掉重复的，只留这一个)
    ========================= */
@@ -129,7 +122,7 @@ body {
   scroll-snap-align: start; 
   scroll-snap-stop: always;
   overflow: hidden;
-  background: #eff9ff;
+  background: #cfe3fb;
 }
 
 /* =========================
@@ -265,7 +258,7 @@ body {
   font-size: 50px;            /* 在 56px 基础上调大两号 */
   line-height: 1.1;
   font-weight: 500;
-  color: #9dc4f2;             /* 统一为你指定的颜色 */
+  color: #97bce7;             /* 统一为你指定的颜色 */
   /* 基础使用衬线体，更有气质 */
   font-family: "Noto Serif SC", "Songti SC", "STSong", serif;
 }
@@ -389,7 +382,7 @@ body {
   top: 0;
   width: 50.5%; /* 稍微重叠 0.5% 消除中间缝隙 */
   height: 100%;
-  background: #eff9ff; 
+  background: #cfe3fb; 
   z-index: 10;
   animation-duration: 1.5s;
   animation-timing-function: cubic-bezier(0.7, 0, 0.3, 1);
@@ -428,7 +421,7 @@ body {
 }
 .hero-nav { display: flex; flex-direction: column; align-items: flex-end; gap: 18px; }
 .hero-nav-link {
-  font-size: 20px; font-weight: 700; color: #9bbee7; text-decoration: none;
+  font-size: 25px; font-weight: 700; color: #68829f; text-decoration: none;
   font-family: "Baskerville", serif;
 }
 
@@ -654,6 +647,142 @@ body {
 }
 
 
+/* --- 页面最外层 --- */
+.valentin-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #cfe3fb; /* 你的淡蓝色背景 */
+  display: flex;             /* 🌟 左右分栏 */
+  overflow: hidden;          /* 🌟 禁止整个页面滚动，只让右边滚 */
+  scroll-snap-align: start;
+}
+
+/* =========================================
+   1. 限制图片容器的宽度 (从 180px 放大)
+   ========================================= */
+.about-pets-container {
+  display: flex;
+  gap: 15px;                 /* 🌟 增加图片间距 */
+  margin: 25px 0 40px;       /* 🌟 增加上下边距，拉开层次 */
+  
+  /* 🌟 核心修改 1: 宽度放大到 300px，
+     大约占左侧 40% 区域的 1/4 到 1/3 之间，视觉上更协调。 */
+  width: 300px;              
+  
+  justify-content: flex-start;
+  align-items: center;       /* 水平对齐 */
+}
+
+/* =========================================
+   2. 精准控制单张图片尺寸与美化 (互动效果)
+   ========================================= */
+.about-pet-image {
+  /* 🌟 核心修改 2: 放大单张图片。
+     大约 140px 的正方形，比之前大了很多。 */
+  width: calc(50% - 8px);    
+  height: 140px;             
+  
+  object-fit: cover;         /* 确保猫狗的脸不被拉伸 */
+  border-radius: 6px;        /* 稍微大一点的圆角，适配大图 */
+  
+  /* 🌟 美化 1: 增加精致的阴影和边框，增加质感 */
+  border: 1px solid rgba(110, 94, 94, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 淡阴影 */
+  box-sizing: border-box;
+
+  /* 🌟 美化 2: 定义过渡效果，为悬停做准备 */
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Valentin Cheval 风格的丝滑曲线 */
+  will-change: transform, box-shadow;
+}
+
+/* 🌟 美化 3: 鼠标悬停的高级互动 */
+.about-pet-image:hover {
+  transform: translateY(-8px) scale(1.02); /* 🌟 向上浮动并微微放大 */
+  box-shadow: 0 12px 24px rgba(110, 94, 94, 0.15); /* 🌟 阴影变深，增加立体感 */
+}
+
+/* =========================================
+   3. 左侧整体布局修正 (实现上下撑开)
+   ========================================= */
+.valentin-left {
+  width: 40%;
+  height: 100%;
+  padding: 100px 5vw 80px 5vw; /* 🌟 确保底部留出足够空间 */
+  
+  display: flex;
+  flex-direction: column;
+  
+  /* 🌟 核心修改 3: 改回 space-between。
+     这会把“标题+图片”撑到最上面，“文字点”撑到最下面。 */
+  justify-content: space-between; 
+  
+  gap: 0;                     /* 🌟 清除统一 gap，利用布局撑开 */
+  border-right: 1px solid rgba(110, 94, 94, 0.2);
+  box-sizing: border-box;
+}
+
+/* =========================================
+   2. 精准控制单张图片尺寸与美化 (放大高度)
+   ========================================= */
+.about-pet-image {
+  width: calc(50% - 8px);    
+  
+  /* 🌟 核心修改: 把高度从 140px 改大，让图片变“长” */
+  height: 200px;             /* 🌟 从 140px 放大到 200px (根据需要可调更大) */
+  
+  object-fit: cover;         /* 确保猫狗的脸不被拉伸变形 */
+  border-radius: 6px;
+  
+  /* 美化与过渡效果 (保持原样) */
+  border: 1px solid rgba(110, 94, 94, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  will-change: transform, box-shadow;
+}
+
+/* 🌟 核心布局 1: 将“标题+图片”包裹在一个 group 里，确保它们在一起 */
+.about-header-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0;                     /* 这里可以用 margin 微调标题和图片的距离 */
+}
+
+/* 🌟 核心布局 2: 修正标题样式，清除可能导致撑开的 margin */
+.valentin-logo {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #6e5e5e;
+  margin: 0 0 10px 0;         /* 只留一个小的下边距 */
+}
+
+/* --- 右侧滚动区域 (沉浸式动效) --- */
+.valentin-right-scroll {
+  width: 60%;                /* 🌟 右边占 60% */
+  height: 100%;
+  overflow-y: auto;          /* 🌟 开启内部滚动 */
+  padding: 100px 8vw 100px 5vw; /* 🌟 顶部 padding 确保第一行不顶出去 */
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+/* 🌟 聚光灯文字动效 */
+.scroll-spotlight-text {
+  color: transparent;
+  background-image: linear-gradient(180deg, #6e5e5e 20%, rgba(110, 94, 94, 0.2) 80%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  background-attachment: fixed; /* 核心动效：背景跟随视口 */
+  line-height: 1.5;
+}
+
+.scroll-spotlight-text p {
+  font-size: 2.5rem;
+  margin-bottom: 60px;
+  font-weight: 700;
+}
+
+
 /* =========================
    5. 第二页：内容布局
    ========================= */
@@ -665,7 +794,7 @@ body {
   flex-shrink: 0;  /* 核心：防止第二页被第一页挤成 0 像素 */
 }
 .content-box { text-align: center; }
-.content-box h2 { color: #95b8f0; font-size: 3rem; margin-bottom: 150px; }
+.content-box h2 { color: #8aa9db; font-size: 3rem; margin-bottom: 150px; }
 
 /* =========================
    6. 动画定义 (保持不变)
@@ -689,7 +818,7 @@ body {
   min-height: 100vh;
   
   /* 🌟 背景图入口：把引号里的路径换成你的图片文件名 */
-  background-image: url('/2-background.png'); 
+  background-image: url('/2-background.jpg'); 
   background-size: cover;      /* 让背景图铺满全屏 */
   background-position: center; /* 让背景图居中 */
   background-repeat: no-repeat;
@@ -712,7 +841,7 @@ body {
   font-size: 36px; 
   
   /* 2. 调整颜色：你可以换成深蓝 #4a90e2，或者纯白 #ffffff，或者你喜欢的任何色值 */
-  color: #aad2ff; 
+  color: #90b1d7; 
   
   text-align: center;
   
@@ -975,7 +1104,7 @@ body {
 .title-p5 {
   font-family: "Noto Serif SC", serif;
   font-size: 2.8rem;
-  color: #9fbada;
+  color: #92abc9;
   text-align: center; 
   margin-top: 40px !important; /* 调整标题离顶部的距离 */
   margin-bottom: 30px;
@@ -1017,52 +1146,184 @@ body {
 
 
 
-/* 1. 全屏背景：深邃渐变 */
-.page-6 {
+/* 1. 容器：严格锁定高度，消除所有溢出可能 */
+.p7-fixed-container {
+  width: 100%;
+  height: 100vh;           /* 🌟 必须固定，不给内容撑开的机会 */
+  position: relative;
+  overflow: hidden;        /* 🌟 强制隐藏任何可能的溢出 */
+  scroll-snap-align: start; 
+  
+  /* 全屏大背景 */
+  background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+              url('/background-6.jpg') no-repeat center center / cover;
+}
+
+/* 2. 标题区：使用绝对定位，不占用垂直空间 */
+.p7-mag-header {
+  position: absolute;
+  top: 8%;                 /* 距离顶部距离 */
+  left: 15%;               /* 距离左侧距离，保持 70% 宽度的对齐感 */
+  z-index: 5;
+}
+
+.p7-mag-title {
+  font-family: serif;
+  font-size: 2.6rem;
+  color: #fff;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+}
+
+.p7-ai-info {
+  font-family: sans-serif;
+  font-size: 1.3rem;
+  font-weight: 2000;
+  color: #ab7c5a;          /* 棕金色署名 */
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-left: 20px;
+}
+
+/* 3. 3D 展位框：居中悬浮 */
+.p7-glass-booth {
+  position: absolute;
+  top: 52%;                /* 垂直居中稍微偏下，给标题留位 */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  height: 55vh;
+  border-radius: 40px;
+  border: 1px solid rgba(254, 234, 123, 0.2);
+  backdrop-filter: blur(15px);
+  
+  /* 🌟 【透明度调整】：修改最后两个 alpha 值 (0.9 和 0.7) */
+  background: radial-gradient(
+    circle at center, 
+    rgba(35, 60, 119, 0.2) 0%, 
+    rgba(224, 236, 250, 0.5) 100%
+  );
+  
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  transition: all 1s ease;
+}
+
+/* 4. 右下角图注：无边框极致加粗 */
+.p7-tag-notes {
+  position: absolute;
+  right: 30px;
+  bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.p7-tag-item {
+  font-family: sans-serif;
+  font-size: 0.9rem;
+  font-weight: 900;       /* 极致加粗 */
+  color: #8db4d6;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.p7-tag-split {
+  width: 30px;
+  height: 1px;
+  background: rgba(171, 124, 90, 0.4);
+  margin: 5px 0;
+}
+
+/* 🌟 核心：容器必须死锁 100vh 且 overflow: hidden */
+.p8-fixed-page {
   width: 100%;
   height: 100vh;
-  background: radial-gradient(circle at center, #2c3e50 0%, #000 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  overflow: hidden;
-}
-
-/* 2. 核心：大幅度放大的 3D 展位 */
-.canvas-side {
-  /* 🌟 这里的尺寸根据你想要的感觉调整，建议占屏幕的 70%-80% */
-  width: 80vw;  
-  height: 70vh; 
-  max-width: 1200px;
-  background: rgba(255, 255, 255, 0.02); /* 极淡的磨砂感 */
-  backdrop-filter: blur(15px);
-  border-radius: 40px; /* 大圆角 */
+  overflow: hidden; 
+  scroll-snap-align: start;
   
-  /* 🌟 增加发光边框，模拟那种科技感线条 */
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 40px 100px rgba(0, 0, 0, 0.8), 
-    inset 0 0 30px rgba(113, 129, 167, 0.1);
-    
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: linear-gradient(rgba(202, 221, 255, 0.5), rgba(0, 0, 0, 0.5)), 
+              url('/3-background.jpg') no-repeat center center / cover;
 }
 
-.canvas-side:hover {
-  transform: scale(1.02); /* 悬停时微微放大，更有灵动感 */
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* 3. 文字装饰（可选，增加页面平衡感） */
-.text-side {
+/* 标题：绝对定位，不占用页面高度 */
+.p8-abs-header {
   position: absolute;
-  bottom: 8%;
-  color: rgba(255, 255, 255, 0.3);
-  font-family: 'Inter', sans-serif;
-  letter-spacing: 5px;
-  font-size: 12px;
+  top: 10%;
+  left: 15%;
+  width: 70%;
+}
+
+.p8-title {
+  font-family: serif;
+  font-size: 2.8rem;
+  color: #fff;
+  margin: 0;
+}
+
+.p8-badge {
+  font-family: sans-serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #6682bd;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  pointer-events: none; /* 防止遮挡鼠标操作 */
+  margin-left: 20px;
+}
+
+/* 面板：绝对定位，使用 transform 居中 */
+.p8-abs-panel {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  padding: 50px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 40px 100px rgba(255, 255, 255, 0.5);
+}
+
+.p8-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.p8-item label {
+  display: block;
+  font-family: sans-serif;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #516898;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.p8-item a, .p8-item span {
+  font-family: serif;
+  font-size: 1.2rem;
+  color: #fff;
+  text-decoration: none;
+}
+
+.p8-links {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* 页脚：绝对定位 */
+.p8-abs-footer {
+  position: absolute;
+  bottom: 5%;
+  left: 15%;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 3px;
 }

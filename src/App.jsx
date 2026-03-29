@@ -1,26 +1,30 @@
-import React, { Suspense, useEffect, useRef } from "react"; 
-// 🌟 核心：增加了 useFrame，这是实现“光随屏转”的灵魂
+import React, { Suspense, useEffect, useRef, useState } from "react"; 
 import { Canvas, useFrame } from '@react-three/fiber'; 
 import { OrbitControls, useGLTF, Center } from '@react-three/drei';
 import "./App.css";
 
-// --- 1. 新增：头灯组件 (实现你要求的：光线永远从你视角上方打下去) ---
+// --- 1. 高级感头灯组件：光随屏转，勾勒模型边缘 ---
 function Headlight() {
   const lightRef = useRef();
   
-  // 每一帧都强制让灯光跟着相机（也就是你的眼睛）走
   useFrame((state) => {
     if (lightRef.current) {
-      // 1. 让灯光位置同步相机位置
-      lightRef.current.position.copy(state.camera.position);
-      // 2. 向上偏移（实现你说的头顶上方 20cm 打光的感觉）
-      lightRef.current.position.y += 2; 
-      // 3. 向前偏移，确保光是从“屏幕外”打向模型
-      lightRef.current.position.z += 1;
+      const { position } = state.camera;
+      // 将灯光设在相机略微偏右、偏上的位置，模拟摄影棚斜上方主光 
+      lightRef.current.position.set(position.x + 1, position.y + 1.5, position.z);
     }
   });
 
-  return <directionalLight ref={lightRef} intensity={2.5} color="#ffffff" />;
+  
+
+  return (
+    <>
+      {/* 主方向光：高亮度金色调，突出质感  */}
+      <directionalLight ref={lightRef} intensity={3.2} color="#fffdfa" castShadow />
+      {/* 基础环境光：微弱冷调，消除死黑  */}
+      <ambientLight intensity={0.6} color="#eef2ff" />
+    </>
+  );
 }
 
 // --- 2. 定义 Model (保持你的原始结构和 Draco 地址) ---
@@ -28,6 +32,8 @@ function Model({ url }) {
   const { scene } = useGLTF(url, 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
   return <primitive object={scene} />;
 }
+
+
 
 // --- 3. 预加载 (保持你的原始路径) ---
 useGLTF.preload('/1.glb', 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
@@ -110,36 +116,52 @@ function App() {
 
 
 
+{/* About Me部分*/}
+<section className="valentin-section">
+  {/* 左边：固定信息 */}
+  <div className="valentin-left">
+    <h1 className="valentin-logo">About Me.</h1>
 
+    {/* 🌟 核心修改：在标题下方加入猫狗照片区域 */}
+    <div className="about-pets-container">
+      <img src="/dog.png" alt="My Dog" className="about-pet-image" />
+      <img src="/cat.png" alt="My Cat" className="about-pet-image" />
+    </div>
 
-      {/* 首页按钮🌟 传送门按钮：直达 Page 6 */}
-<button 
-  onClick={() => {
-    // 逻辑：找到 Page 6 所在的 section 并滚动到它
-    const page6 = document.querySelector('.page-6');
-    page6?.scrollIntoView({ behavior: 'smooth' });
-  }}
-  style={{
-    position: 'fixed',
-    bottom: '30px',
-    right: '30px',
-    zIndex: 9999, // 确保它在所有层级之上
-    background: 'rgba(255, 255, 255, 0.1)', // 半透明白
-    color: '#8eafd6',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
-    borderRadius: '20px',
-    padding: '8px 16px',
-    cursor: 'pointer',
-    fontSize: '12px',
-    backdropFilter: 'blur(5px)', // 高斯模糊，显高级
-    transition: 'all 0.3s ease',
-    outline: 'none'
-  }}
-  onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'}
-  onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'}
->
-  GO TO 3D →
-</button>
+    <div className="about-points">
+      {/* 🌟 放置你的核心要点信息 */}
+      <h3 className="partners-title">ANTHROPOLOGY GRADUATE</h3>
+      <p style={{color: '#6e5e5e'}}>FAU Erlangen-Nürnberg</p>
+      <div className="decor-line"></div>
+    </div>
+  </div>
+
+  {/* 右边：沉浸式滚动阅读 */}
+  <div className="valentin-right-scroll">
+    <div className="scroll-spotlight-text">
+      <span className="text-intro-label">(Intro)</span>
+      <p>
+        By bridging anthropology and digital operations, I’ve had the unique opportunity 
+        to coordinate bilingual narratives...
+      </p>
+      
+      <span className="text-intro-label">(Experience)</span>
+      <p>
+        Managed support for Winter Olympics supply chain projects and 
+        Universal Studios Beijing-related projects.
+      </p>
+      
+      <span className="text-intro-label">(Goal)</span>
+      <p>
+        My aim is to merge data-driven insights with human-centered communication.
+      </p>
+      
+      {/* 🌟 多加几个空行，确保最后一段文字也能滚动到聚光灯位置 */}
+      <div style={{height: '30vh'}}></div>
+    </div>
+  </div>
+</section>
+
 
 
 
@@ -194,7 +216,7 @@ function App() {
           <h2 className="section-title" style={{ 
             marginBottom: "40px", 
             fontSize: "2.5rem",
-            color: "#95b8f0",
+            color: "#8daee3",
             textAlign: "center"
           }}>
             AI-Powered Product Visual Concept showcase 1
@@ -279,7 +301,7 @@ function App() {
           <h2 className="section-title" style={{ 
             marginBottom: "40px", 
             fontSize: "2.5rem",
-            color: "#95b8f0",
+            color: "#86a6d9",
             textAlign: "center"
           }}>
             AI-Powered Product Visual Concept Showcase 2 {/* 💡 换个标题区分一下 */}
@@ -375,54 +397,98 @@ function App() {
             </video>
           </div>
           
-          <p className="video-description">
-            Experience the future of creativity where AI orchestrates both sound and vision.
-          </p>
+         
         </div>
       </section>
 
 
-
-<section
-  className="next-page page-6"
-  style={{ 
-    height: "100vh", 
-    width: "100%", 
-    background: "radial-gradient(circle at center, #7181a7 0%, #e0ecfa 100%)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
-    overflow: "hidden"
-  }}
->
-  <Suspense fallback={<div style={{ color: "white" }}>Loading...</div>}>
-<Canvas 
-  // 🌟 1. 放大模型：把相机拉近（fov 从 45 改成 20），模型就会在视觉上变大很多
-  camera={{ position: [0, 0, 10], fov: 25 }} 
-  style={{ width: "100%", height: "100%" }}
-  gl={{ antialias: true }}
->
-  {/* 🌟 2. 环境光再次压低 (0.5 -> 0.3)：环境光越低，模型的转折处阴影越自然 */}
-  <ambientLight intensity={0.3} />
-
-  {/* 🌟 3. 头灯：光线随屏走，保持亮面 */}
-  <Headlight />
-
-  {/* 🌟 4. 侧向主灯：稍微偏移，制造侧面阴影 */}
-  <directionalLight position={[10, 10, 5]} intensity={1.5} />
-
-  {/* 🌟 5. 放大核心：给 Center 加一个 scale (缩放) */}
-  <Center scale={1.8}> 
-    <Model url="/1.glb" />
-  </Center>
+{/* --- 🌟 第 7 页：3D 展示 (绝对定位解决回滚版) --- */}
+<div className="p7-fixed-container">
   
-  <OrbitControls enableZoom={true} enablePan={true} makeDefault />
-</Canvas>
-  </Suspense>
-</section>
+  {/* 背景层已移至 CSS */}
+  
+  <header className="p7-mag-header">
+    <h2 className="p7-mag-title">
+      Interactive Showcase <span className="p7-ai-info">Powered by AI</span>
+    </h2>
+  </header>
 
-      
+  <section className="p7-glass-booth">
+    <Suspense fallback={<div className="p7-loading-text">Loading...</div>}>
+      <Canvas camera={{ position: [0, 0, 10], fov: 25 }}>
+        <ambientLight intensity={0.4} />
+        <Headlight />
+        <Center scale={1.8}> 
+          <Model url="/1.glb" />
+        </Center>
+        <OrbitControls enableZoom={true} makeDefault />
+      </Canvas>
+    </Suspense>
+
+    {/* 右下角极简图注 */}
+    <div className="p7-tag-notes">
+      <span className="p7-tag-item">Drag to Rotate</span>
+      <div className="p7-tag-split" />
+      <span className="p7-tag-item">Scroll to Zoom</span>
+    </div>
+  </section>
+
+</div>
+
+
+{/* --- 🌟 第 8 页：Contact (绝对锁定版) --- */}
+<div className="p8-fixed-page">
+  
+  {/* 1. 标题：绝对定位在左上 */}
+  <div className="p8-abs-header">
+    <h2 className="p8-title">
+      Get In Touch <span className="p8-badge">Available for Work</span>
+    </h2>
+  </div>
+
+  {/* 2. 信息面板：绝对定位在中央 */}
+  <div className="p8-abs-panel">
+    <div className="p8-grid">
+<div className="p8-item">
+  <label>Email</label>
+  <a 
+    href="#copy" 
+    className="p8-copy-link"
+    onClick={(e) => {
+      e.preventDefault();
+      navigator.clipboard.writeText("zhangjingmarcia123@gmail.com");
+      e.target.innerText = "Copied to clipboard!";
+      setTimeout(() => { e.target.innerText = "zhangjingmarcia123@gmail.com" }, 2000);
+    }}
+  >
+    zhangjingmarcia123@gmail.com
+  </a>
+</div>
+<div className="p8-item">
+  <label>Social</label>
+  <div className="p8-links">
+    <a 
+      href="https://www.linkedin.com/in/jing-zhang-43a548278/" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className="p8-social-link"
+    >
+      LinkedIn: Jing Zhang
+    </a>
+  </div>
+</div>
+      <div className="p8-item">
+        <label>Location</label>
+        <span>Fürth / Remote</span>
+      </div>
+    </div>
+  </div>
+
+  {/* 3. 署名：绝对定位在底部 */}
+  <div className="p8-abs-footer">
+    <p>© 2026 DESIGNED BY Jing</p>
+  </div>
+</div>
 
 
 
