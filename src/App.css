@@ -464,7 +464,7 @@ body {
 .hero-right {
   position: fixed;   /* 核心：固定定位，不随页面滚动 */
   top: 20px;        /* 距离顶部位置 */
-  right: 20px;       /* 距离右侧位置 */
+  right: 5px;       /* 距离右侧位置 */
   z-index: 999;      /* 确保它永远在所有页面最上方 */
   
   width: auto;       /* 不再占用第一页的宽度百分比 */
@@ -647,141 +647,170 @@ body {
 }
 
 
-/* --- 页面最外层 --- */
+
+
+/* --- About Me, 页面最外层 (确保背景色生效) --- */
 .valentin-section {
   position: relative;
   width: 100%;
   height: 100vh;
-  background-color: #cfe3fb; /* 你的淡蓝色背景 */
-  display: flex;             /* 🌟 左右分栏 */
-  overflow: hidden;          /* 🌟 禁止整个页面滚动，只让右边滚 */
+  background-color: #cfe3fb !important; /* 🌟 强制淡蓝色背景 */
+  display: flex;
+  overflow: hidden;
   scroll-snap-align: start;
 }
 
-/* =========================================
-   1. 限制图片容器的宽度 (从 180px 放大)
-   ========================================= */
-.about-pets-container {
-  display: flex;
-  gap: 15px;                 /* 🌟 增加图片间距 */
-  margin: 25px 0 40px;       /* 🌟 增加上下边距，拉开层次 */
-  
-  /* 🌟 核心修改 1: 宽度放大到 300px，
-     大约占左侧 40% 区域的 1/4 到 1/3 之间，视觉上更协调。 */
-  width: 300px;              
-  
-  justify-content: flex-start;
-  align-items: center;       /* 水平对齐 */
-}
-
-/* =========================================
-   2. 精准控制单张图片尺寸与美化 (互动效果)
-   ========================================= */
-.about-pet-image {
-  /* 🌟 核心修改 2: 放大单张图片。
-     大约 140px 的正方形，比之前大了很多。 */
-  width: calc(50% - 8px);    
-  height: 140px;             
-  
-  object-fit: cover;         /* 确保猫狗的脸不被拉伸 */
-  border-radius: 6px;        /* 稍微大一点的圆角，适配大图 */
-  
-  /* 🌟 美化 1: 增加精致的阴影和边框，增加质感 */
-  border: 1px solid rgba(110, 94, 94, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 淡阴影 */
-  box-sizing: border-box;
-
-  /* 🌟 美化 2: 定义过渡效果，为悬停做准备 */
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); /* Valentin Cheval 风格的丝滑曲线 */
-  will-change: transform, box-shadow;
-}
-
-/* 🌟 美化 3: 鼠标悬停的高级互动 */
-.about-pet-image:hover {
-  transform: translateY(-8px) scale(1.02); /* 🌟 向上浮动并微微放大 */
-  box-shadow: 0 12px 24px rgba(110, 94, 94, 0.15); /* 🌟 阴影变深，增加立体感 */
-}
-
-/* =========================================
-   3. 左侧整体布局修正 (实现上下撑开)
-   ========================================= */
+/* --- 左侧布局 (修正对齐与透明度) --- */
 .valentin-left {
   width: 40%;
   height: 100%;
-  padding: 100px 5vw 80px 5vw; /* 🌟 确保底部留出足够空间 */
-  
+  /* 🌟 这里的 7vw 决定了左侧内容的统一对齐轴 */
+  padding: 100px 5vw 80px 7vw; 
   display: flex;
   flex-direction: column;
-  
-  /* 🌟 核心修改 3: 改回 space-between。
-     这会把“标题+图片”撑到最上面，“文字点”撑到最下面。 */
   justify-content: space-between; 
-  
-  gap: 0;                     /* 🌟 清除统一 gap，利用布局撑开 */
-  border-right: 1px solid rgba(110, 94, 94, 0.2);
+  border-right: 1px solid rgba(82, 119, 146, 0.15);
   box-sizing: border-box;
+  background: transparent !important; /* 🌟 确保背景色穿透 */
 }
 
 /* =========================================
-   2. 精准控制单张图片尺寸与美化 (放大高度)
+   About Me: 标题与描述 (左侧对齐轴)
    ========================================= */
-.about-pet-image {
-  width: calc(50% - 8px);    
-  
-  /* 🌟 核心修改: 把高度从 140px 改大，让图片变“长” */
-  height: 200px;             /* 🌟 从 140px 放大到 200px (根据需要可调更大) */
-  
-  object-fit: cover;         /* 确保猫狗的脸不被拉伸变形 */
-  border-radius: 6px;
-  
-  /* 美化与过渡效果 (保持原样) */
-  border: 1px solid rgba(110, 94, 94, 0.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  will-change: transform, box-shadow;
-}
-
-/* 🌟 核心布局 1: 将“标题+图片”包裹在一个 group 里，确保它们在一起 */
 .about-header-group {
   display: flex;
   flex-direction: column;
-  gap: 0;                     /* 这里可以用 margin 微调标题和图片的距离 */
+  align-items: flex-start; /* 🌟 确保所有内容严格左对齐 */
 }
 
-/* 🌟 核心布局 2: 修正标题样式，清除可能导致撑开的 margin */
 .valentin-logo {
   font-size: 3rem;
   font-weight: 800;
-  color: #6e5e5e;
-  margin: 0 0 10px 0;         /* 只留一个小的下边距 */
+  color: #7590d0;
+  margin: 0;
 }
 
-/* --- 右侧滚动区域 (沉浸式动效) --- */
+/* --- 宠物描述文字 (新增) --- */
+.pet-description {
+  font-size: 1.3rem;
+  color: rgba(91, 113, 145, 0.6);
+  margin: 3px 0 0 0;
+  font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+/* --- 图片容器 (调整间距与对齐) --- */
+.about-pets-container {
+  display: flex;
+  gap: 15px;
+  margin: 30px 0 0 0; /* 🌟 调整间距，离描述文字近一点 */
+  width: 100%;
+  justify-content: flex-start;
+  align-items: flex-start; /* 🌟 顶部对齐，适配不同比例 */
+}
+
+/* --- 🌟 画廊相框 Wrapper (新增：解决无法停留的关键) --- */
+.about-pet-image-wrapper {
+  width: 200px;             /* 🌟 统一相框宽度 */
+  background: #ffffff;      /* 🌟 纯白画廊底色 */
+  padding: 7px;             /* 🌟 相框白边 */
+  border: 1px solid rgba(110, 94, 94, 0.1);
+  box-shadow: 0 4px 15px rgba(108, 134, 167, 0.05);
+  border-radius: 2px;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer;
+}
+
+/* 悬停互动：相框整体升起并放大 */
+.about-pet-image-wrapper:hover {
+  /* 🌟 transform 可以同时包含多个变换效果，空格隔开即可 */
+  /* translateY(-10px) 控制上浮，scale(1.1) 控制放大 */
+  transform: translateY(-10px) scale(1.8); 
+  
+  /* 阴影随之加深，增加悬浮感 */
+  box-shadow: 0 28px 60px rgba(75, 99, 142, 0.15);
+  
+  /* 确保悬停时图片图层在最上方 */
+  z-index: 10;
+}
+
+/* --- 单张图片 (修正重复定义) --- */
+.about-pet-image {
+  width: 100%;             /* 🌟 填满相框 */
+  height: auto;            /* 🌟 核心：高度自适应，不裁剪不拉伸 */
+  display: block;
+  object-fit: contain;     /* 🌟 完整显示图片内容 */
+}
+
+/* --- 底部学历信息美化 --- */
+.about-points {
+  margin-top: auto;
+}
+
+.partners-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #7e9cbd;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.decor-line {
+  width: 0px;
+  height: 2px;
+  background-color: #6a749f;
+  opacity: 0.2;
+  margin-top: 15px;
+}
+
+/* --- 右侧滚动容器 --- */
 .valentin-right-scroll {
-  width: 60%;                /* 🌟 右边占 60% */
+  width: 60%;
   height: 100%;
-  overflow-y: auto;          /* 🌟 开启内部滚动 */
-  padding: 100px 8vw 100px 5vw; /* 🌟 顶部 padding 确保第一行不顶出去 */
-  box-sizing: border-box;
-  scroll-behavior: smooth;
+  overflow-y: scroll;
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  /* 🌟 缩小顶部留白，让文字更靠近导航栏 */
+  padding: 12vh 8vw 100px 5vw; 
 }
 
-/* 🌟 聚光灯文字动效 */
+.valentin-right-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* --- 聚光灯文字核心逻辑 (顶部清晰版) --- */
 .scroll-spotlight-text {
-  color: transparent;
-  background-image: linear-gradient(180deg, #6e5e5e 20%, rgba(110, 94, 94, 0.2) 80%);
-  background-clip: text;
+  /* 🌟 修改渐变：从顶部 (0%) 到 40% 位置保持最深色（最清晰）
+     然后从 50% 开始向底部逐渐变淡模糊 */
+  background: linear-gradient(
+    to bottom,
+    rgb(111, 138, 185) 0%,      /* 顶部：最深最清晰 */
+    rgb(104, 126, 169) 40%,     /* 屏幕上半部分：依然保持清晰 */
+    rgba(110, 94, 94, 0.087) 80%,  /* 下半部分：开始快速淡出 */
+    rgba(110, 94, 94, 0) 100%  /* 底部：完全淡出 */
+  );
+  background-attachment: fixed;
   -webkit-background-clip: text;
-  background-attachment: fixed; /* 核心动效：背景跟随视口 */
-  line-height: 1.5;
+  background-clip: text;
+  color: transparent;
+  transition: all 0.3s ease;
 }
 
 .scroll-spotlight-text p {
-  font-size: 2.5rem;
-  margin-bottom: 60px;
+  font-size: 2.4rem;             /* 字号微调，增加耐看度 */
+  line-height: 1.4;
   font-weight: 700;
+  /* 🌟 缩小段落间距：从 18vh 降到 10vh，让叙事更连贯 */
+  margin-bottom: 10vh;           
+  letter-spacing: -0.01em;
 }
 
+.scroll-spotlight-text strong {
+  color: inherit;
+  font-weight: 900;
+  /* 保持与整体渐变一致 */
+}
 
 /* =========================
    5. 第二页：内容布局
@@ -1192,8 +1221,8 @@ body {
   top: 52%;                /* 垂直居中稍微偏下，给标题留位 */
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 70%;
-  height: 55vh;
+  width: 60%;
+  height: 50vh;
   border-radius: 40px;
   border: 1px solid rgba(254, 234, 123, 0.2);
   backdrop-filter: blur(15px);
@@ -1284,7 +1313,7 @@ body {
   border-radius: 30px;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 5px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 40px 100px rgba(255, 255, 255, 0.5);
 }
 
